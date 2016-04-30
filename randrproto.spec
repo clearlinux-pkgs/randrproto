@@ -4,7 +4,7 @@
 #
 Name     : randrproto
 Version  : 1.5.0
-Release  : 6
+Release  : 7
 URL      : http://xorg.freedesktop.org/releases/individual/proto/randrproto-1.5.0.tar.bz2
 Source0  : http://xorg.freedesktop.org/releases/individual/proto/randrproto-1.5.0.tar.bz2
 Summary  : Randr extension headers
