@@ -4,13 +4,19 @@
 #
 Name     : randrproto
 Version  : 1.5.0
-Release  : 8
+Release  : 9
 URL      : http://xorg.freedesktop.org/releases/individual/proto/randrproto-1.5.0.tar.bz2
 Source0  : http://xorg.freedesktop.org/releases/individual/proto/randrproto-1.5.0.tar.bz2
 Summary  : Randr extension headers
 Group    : Development/Tools
 License  : HPND
 Requires: randrproto-doc
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
+BuildRequires : pkgconfig(32xorg-macros)
 BuildRequires : pkgconfig(xorg-macros)
 
 %description
@@ -27,6 +33,14 @@ Provides: randrproto-devel
 dev components for the randrproto package.
 
 
+%package dev32
+Summary: dev32 components for the randrproto package.
+Group: Default
+
+%description dev32
+dev32 components for the randrproto package.
+
+
 %package doc
 Summary: doc components for the randrproto package.
 Group: Documentation
@@ -37,12 +51,21 @@ doc components for the randrproto package.
 
 %prep
 %setup -q -n randrproto-1.5.0
+pushd ..
+cp -a randrproto-1.5.0 build32
+popd
 
 %build
 export LANG=C
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
+pushd ../build32
+export CFLAGS="$CFLAGS -m32"
+export CXXFLAGS="$CXXFLAGS -m32"
+%configure --disable-static  --libdir=/usr/lib32
+make V=1  %{?_smp_mflags}
+popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
@@ -52,6 +75,15 @@ make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
 rm -rf %{buildroot}
+pushd ../build32
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do mv $i 32$i ; done
+popd
+fi
+popd
 %make_install
 
 %files
@@ -62,6 +94,10 @@ rm -rf %{buildroot}
 /usr/include/X11/extensions/randr.h
 /usr/include/X11/extensions/randrproto.h
 /usr/lib64/pkgconfig/randrproto.pc
+
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/pkgconfig/32randrproto.pc
 
 %files doc
 %defattr(-,root,root,-)
