@@ -4,7 +4,7 @@
 #
 Name     : randrproto
 Version  : 1.5.0
-Release  : 7
+Release  : 8
 URL      : http://xorg.freedesktop.org/releases/individual/proto/randrproto-1.5.0.tar.bz2
 Source0  : http://xorg.freedesktop.org/releases/individual/proto/randrproto-1.5.0.tar.bz2
 Summary  : Randr extension headers
@@ -21,6 +21,7 @@ so as to resize, rotate and reflect the root window of a screen.
 %package dev
 Summary: dev components for the randrproto package.
 Group: Development
+Provides: randrproto-devel
 
 %description dev
 dev components for the randrproto package.
@@ -38,10 +39,15 @@ doc components for the randrproto package.
 %setup -q -n randrproto-1.5.0
 
 %build
+export LANG=C
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
 %check
+export LANG=C
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
@@ -55,7 +61,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 /usr/include/X11/extensions/randr.h
 /usr/include/X11/extensions/randrproto.h
-/usr/lib64/pkgconfig/*.pc
+/usr/lib64/pkgconfig/randrproto.pc
 
 %files doc
 %defattr(-,root,root,-)
